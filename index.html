@@ -1126,6 +1126,238 @@
                 font-size: 1.4rem;
             }
         }
+
+        /* ===== WAVE DIVIDERS ===== */
+        .wave-divider {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            margin: -1px 0;
+        }
+
+        .wave-divider svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave-divider .wave-path {
+            fill: none;
+            stroke: url(#waveGradient);
+            stroke-width: 2;
+        }
+
+        .wave-divider .wave-1 { opacity: 0.4; }
+        .wave-divider .wave-2 { opacity: 0.2; }
+        .wave-divider .wave-3 { opacity: 0.1; }
+
+        @media (max-width: 768px) {
+            .wave-divider { height: 60px; }
+        }
+
+        /* ===== FLOATING BADGES ===== */
+        .floating-badge {
+            position: fixed;
+            z-index: 50;
+            padding: 10px 18px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transform: scale(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .floating-badge:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .floating-badge.badge-new {
+            top: 40%;
+            left: 20px;
+        }
+
+        .floating-badge.badge-coffee {
+            bottom: 25%;
+            right: 30px;
+        }
+
+        @media (max-width: 1200px) {
+            .floating-badge { display: none; }
+        }
+
+        /* ===== TIMELINE SECTION ===== */
+        .timeline-section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .timeline-wrapper {
+            position: relative;
+            max-width: 900px;
+            margin: 48px auto 0;
+            padding: 40px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, transparent 0%, var(--glass-border) 10%, var(--accent) 50%, var(--glass-border) 90%, transparent 100%);
+            transform: translateX(-50%);
+        }
+
+        .timeline-progress {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 3px;
+            height: 0%;
+            background: linear-gradient(180deg, #6366f1, #8b5cf6, #ec4899);
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .timeline-item {
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(50% + 40px);
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: calc(50% + 40px);
+            transform: translateX(30px);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .timeline-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            max-width: 350px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .timeline-content:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline-year {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            margin-bottom: 12px;
+        }
+
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .timeline-subtitle {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .timeline-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .timeline-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .timeline-tag {
+            padding: 3px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            color: #a5b4fc;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-line, .timeline-progress { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 50px;
+                padding-right: 0;
+                transform: translateX(0);
+            }
+            .timeline-dot { left: 20px; }
+            .timeline-content { max-width: 100%; }
+        }
+
     </style>
 </head>
 <body class="loading">
@@ -1157,6 +1389,14 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
+    <!-- Floating Badges -->
+    <a href="#apps" class="floating-badge badge-new" id="badge-new">
+        ✨ New Project!
+    </a>
+    <div class="floating-badge badge-coffee" id="badge-coffee">
+        ☕ Fueled by Coffee
+    </div>
+
     <!-- Navigation -->
     <nav id="navbar">
         <div class="container">
@@ -1164,6 +1404,7 @@
             <ul class="nav-links">
                 <li><a href="#apps">Apps</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#journey">Journey</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </div>
@@ -1196,6 +1437,22 @@
             </div>
         </div>
     </section>
+
+    <!-- Wave Divider: Hero to Apps -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#6366f1" />
+                    <stop offset="50%" style="stop-color:#8b5cf6" />
+                    <stop offset="100%" style="stop-color:#ec4899" />
+                </linearGradient>
+            </defs>
+            <path class="wave-path wave-1" d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60"/>
+            <path class="wave-path wave-2" d="M0,80 C360,20 720,100 1080,40 C1260,10 1440,80 1440,80"/>
+            <path class="wave-path wave-3" d="M0,40 C300,100 600,20 900,80 C1200,140 1440,40 1440,40"/>
+        </svg>
+    </div>
 
     <!-- Apps Section -->
     <section id="apps">
@@ -1238,6 +1495,15 @@
             </div>
         </div>
     </section>
+
+    <!-- Wave Divider: Apps to About -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path class="wave-path wave-1" d="M0,40 C360,100 720,0 1080,60 C1260,90 1440,40 1440,40"/>
+            <path class="wave-path wave-2" d="M0,70 C240,10 600,110 960,50 C1200,10 1440,70 1440,70"/>
+            <path class="wave-path wave-3" d="M0,90 C480,30 960,110 1440,50"/>
+        </svg>
+    </div>
 
     <!-- About Section -->
     <section id="about">
@@ -1293,13 +1559,93 @@
         </div>
     </section>
 
+    <!-- Wave Divider: About to Timeline -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path class="wave-path wave-1" d="M0,80 C180,20 360,100 540,40 C720,0 900,80 1080,30 C1260,0 1440,80 1440,80"/>
+            <path class="wave-path wave-2" d="M0,50 C300,110 600,10 900,70 C1200,130 1440,50 1440,50"/>
+            <path class="wave-path wave-3" d="M0,100 C400,40 800,120 1200,60 C1350,40 1440,100 1440,100"/>
+        </svg>
+    </div>
+
+    <!-- Timeline Section -->
+    <section id="journey" class="timeline-section">
+        <div class="container">
+            <p class="section-title reveal">My Journey</p>
+            <h2 class="reveal">Development Timeline</h2>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-line"></div>
+                <div class="timeline-progress" id="timeline-progress"></div>
+
+                <!-- Timeline Item 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">2025</span>
+                        <h3 class="timeline-title">First iOS App Launch</h3>
+                        <p class="timeline-subtitle">Idle Ant Colony</p>
+                        <p class="timeline-description">Released my first mobile game on the App Store. Built with SwiftUI and SpriteKit, featuring idle mechanics and beautiful animations.</p>
+                        <div class="timeline-tags">
+                            <span class="timeline-tag">SwiftUI</span>
+                            <span class="timeline-tag">SpriteKit</span>
+                            <span class="timeline-tag">iOS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">2023</span>
+                        <h3 class="timeline-title">Hired as Fullstack Developer</h3>
+                        <p class="timeline-subtitle">Going Professional</p>
+                        <p class="timeline-description">Landed my first developer role and dove deep into fullstack development with React, Vue, Next.js, and Express.</p>
+                        <div class="timeline-tags">
+                            <span class="timeline-tag">React</span>
+                            <span class="timeline-tag">Vue</span>
+                            <span class="timeline-tag">TypeScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">2022</span>
+                        <h3 class="timeline-title">The Beginning</h3>
+                        <p class="timeline-subtitle">Side Hobby</p>
+                        <p class="timeline-description">Started my coding journey as a side hobby. Discovered my passion for building things and creating interactive experiences.</p>
+                        <div class="timeline-tags">
+                            <span class="timeline-tag">HTML</span>
+                            <span class="timeline-tag">CSS</span>
+                            <span class="timeline-tag">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wave Divider: Timeline to Contact -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path class="wave-path wave-1" d="M0,60 C200,120 400,0 600,60 C800,120 1000,0 1200,60 C1350,100 1440,60 1440,60"/>
+            <path class="wave-path wave-2" d="M0,30 C360,90 720,10 1080,70 C1260,100 1440,30 1440,30"/>
+            <path class="wave-path wave-3" d="M0,90 C240,30 720,110 1200,50 C1380,30 1440,90 1440,90"/>
+        </svg>
+    </div>
+
     <!-- Contact Section -->
     <section id="contact">
         <div class="container">
             <div class="contact-content">
                 <p class="section-title reveal">Get In Touch</p>
-                <h2 class="reveal">Let's Build Something Together</h2>
-                <p class="reveal">Have a project in mind or just want to chat? Feel free to reach out. I'm always open to discussing new opportunities and ideas.</p>
+                <h2 class="reveal">Let's Connect</h2>
+                <p class="reveal">Have a project in mind or just want to chat? Reach out through my socials!</p>
+
                 <div class="social-links reveal">
                     <a href="https://github.com/Cameron-Drury" class="social-link magnetic" target="_blank" aria-label="GitHub">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -2060,6 +2406,81 @@
             el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
             el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
         });
+
+        // ===== FLOATING BADGES ANIMATION =====
+        const badges = document.querySelectorAll('.floating-badge');
+        badges.forEach((badge, index) => {
+            // Entrance animation
+            gsap.to(badge, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.6,
+                delay: 2.5 + (index * 0.2),
+                ease: 'back.out(1.7)'
+            });
+
+            // Continuous floating
+            gsap.to(badge, {
+                y: '-=12',
+                duration: 2.5 + Math.random(),
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: 3 + (index * 0.2)
+            });
+
+            // Cursor hover
+            badge.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            badge.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+        });
+
+        // ===== TIMELINE ANIMATIONS =====
+        const timelineItems = gsap.utils.toArray('.timeline-item');
+        const timelineProgress = document.getElementById('timeline-progress');
+
+        timelineItems.forEach((item, index) => {
+            const isEven = index % 2 === 1;
+
+            gsap.to(item, {
+                opacity: 1,
+                x: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none',
+                    onEnter: () => {
+                        item.classList.add('active');
+                        gsap.fromTo(item.querySelector('.timeline-dot'),
+                            { scale: 0 },
+                            { scale: 1, duration: 0.4, ease: 'back.out(2)' }
+                        );
+                    }
+                }
+            });
+        });
+
+        // Progress line animation
+        if (timelineProgress) {
+            gsap.to(timelineProgress, {
+                height: '100%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.timeline-wrapper',
+                    start: 'top center',
+                    end: 'bottom center',
+                    scrub: 1
+                }
+            });
+        }
+
+        // Timeline hover effects
+        document.querySelectorAll('.timeline-content').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+        });
+
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 </body>
