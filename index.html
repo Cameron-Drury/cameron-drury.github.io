@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cameron Drury | Fullstack Developer</title>
+    <meta name="description" content="Cameron Drury - Fullstack Developer based in Australia. Building beautiful iOS apps, mobile games, and web applications with SwiftUI, React, and modern technologies.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -23,6 +24,11 @@
             --text-secondary: rgba(255, 255, 255, 0.6);
             --accent: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.4);
+            --terminal-green: #22c55e;
+        }
+
+        html {
+            scroll-behavior: auto;
         }
 
         body {
@@ -31,9 +37,130 @@
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            cursor: none;
         }
 
-        /* Animated background */
+        body.loading {
+            overflow: hidden;
+        }
+
+        /* ===== PRELOADER ===== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .preloader.hidden {
+            pointer-events: none;
+        }
+
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 3px;
+            background: var(--glass-border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 10px;
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, opacity 0.3s ease;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .cursor-ring.hover {
+            width: 60px;
+            height: 60px;
+            border-color: #8b5cf6;
+            opacity: 0.3;
+        }
+
+        .cursor-ring.click {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-ring { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* ===== SCROLL PROGRESS ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            width: 0%;
+            z-index: 9999;
+            transition: none;
+        }
+
+        /* ===== THREE.JS CANVAS ===== */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* ===== BACKGROUND ===== */
         .bg-gradient {
             position: fixed;
             top: 0;
@@ -45,21 +172,13 @@
                 radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
             z-index: -1;
-            animation: gradientMove 20s ease-in-out infinite;
         }
 
-        @keyframes gradientMove {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
-        }
-
-        /* Floating orbs */
         .orb {
             position: fixed;
             border-radius: 50%;
             filter: blur(80px);
             opacity: 0.5;
-            animation: float 15s ease-in-out infinite;
             z-index: -1;
         }
 
@@ -69,7 +188,6 @@
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             top: -100px;
             right: -100px;
-            animation-delay: 0s;
         }
 
         .orb-2 {
@@ -78,7 +196,6 @@
             background: linear-gradient(135deg, #3b82f6, #06b6d4);
             bottom: -50px;
             left: -50px;
-            animation-delay: -5s;
         }
 
         .orb-3 {
@@ -87,24 +204,16 @@
             background: linear-gradient(135deg, #ec4899, #f43f5e);
             top: 50%;
             left: 50%;
-            animation-delay: -10s;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(30px, -30px); }
-            50% { transform: translate(-20px, 20px); }
-            75% { transform: translate(-30px, -20px); }
-        }
-
-        /* Container */
+        /* ===== CONTAINER ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
-        /* Navigation */
+        /* ===== NAVIGATION ===== */
         nav {
             position: fixed;
             top: 0;
@@ -116,6 +225,11 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
+            transition: padding 0.3s ease, transform 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 12px 0;
         }
 
         nav .container {
@@ -131,6 +245,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .nav-links {
@@ -145,22 +266,41 @@
             font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
         }
 
         .nav-links a:hover {
             color: var(--text-primary);
         }
 
-        /* Hero Section */
+        /* ===== HERO SECTION ===== */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             padding-top: 80px;
+            position: relative;
         }
 
         .hero-content {
             max-width: 700px;
+            opacity: 0;
         }
 
         .hero-badge {
@@ -186,8 +326,8 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
         h1 {
@@ -201,11 +341,22 @@
             background-clip: text;
         }
 
+        h1 .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px) rotateX(-90deg);
+        }
+
         .hero p {
             font-size: 1.25rem;
             color: var(--text-secondary);
             line-height: 1.7;
             margin-bottom: 40px;
+        }
+
+        .role-text {
+            color: var(--accent);
+            font-weight: 600;
         }
 
         .hero-buttons {
@@ -214,6 +365,7 @@
             flex-wrap: wrap;
         }
 
+        /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -224,8 +376,25 @@
             font-weight: 500;
             text-decoration: none;
             transition: all 0.3s ease;
-            cursor: pointer;
+            cursor: none;
             border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
@@ -235,7 +404,6 @@
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
             box-shadow: 0 8px 30px var(--accent-glow);
         }
 
@@ -248,12 +416,12 @@
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
         }
 
-        /* Section styling */
+        /* ===== SECTIONS ===== */
         section {
             padding: 120px 0;
+            position: relative;
         }
 
         .section-title {
@@ -271,7 +439,7 @@
             margin-bottom: 24px;
         }
 
-        /* Apps Section */
+        /* ===== APPS SECTION ===== */
         .apps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -286,9 +454,10 @@
             padding: 32px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            transition: all 0.4s ease;
+            transition: all 0.4s ease, transform 0.1s ease;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
         .app-card::before {
@@ -301,8 +470,33 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
         }
 
+        .app-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                transparent 40%,
+                rgba(255,255,255,0.03) 45%,
+                rgba(255,255,255,0.06) 50%,
+                rgba(255,255,255,0.03) 55%,
+                transparent 60%,
+                transparent 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .app-card:hover::after {
+            opacity: 1;
+        }
+
         .app-card:hover {
-            transform: translateY(-8px);
             border-color: rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
@@ -355,6 +549,12 @@
             border-radius: 100px;
             font-size: 0.8rem;
             color: #a5b4fc;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
         }
 
         .app-link {
@@ -371,7 +571,7 @@
             gap: 12px;
         }
 
-        /* About Section */
+        /* ===== ABOUT SECTION ===== */
         .about-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -399,6 +599,15 @@
             border-radius: 100px;
             font-size: 0.9rem;
             backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .skill:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent);
+            transform: translateY(-3px);
         }
 
         .about-visual {
@@ -406,51 +615,116 @@
             justify-content: center;
         }
 
-        .code-window {
+        /* ===== TERMINAL ===== */
+        .terminal {
             background: var(--bg-secondary);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             overflow: hidden;
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        .code-header {
+        .terminal-header {
             display: flex;
+            align-items: center;
             gap: 8px;
             padding: 16px;
             background: rgba(0, 0, 0, 0.3);
             border-bottom: 1px solid var(--glass-border);
         }
 
-        .code-dot {
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
         }
 
-        .code-dot.red { background: #ff5f57; }
-        .code-dot.yellow { background: #febc2e; }
-        .code-dot.green { background: #28c840; }
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
 
-        .code-content {
-            padding: 24px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             line-height: 1.8;
+            min-height: 250px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .code-line {
+        .terminal-line {
             display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
         }
 
-        .code-keyword { color: #ff79c6; }
-        .code-type { color: #8be9fd; }
-        .code-string { color: #f1fa8c; }
-        .code-property { color: #50fa7b; }
-        .code-comment { color: #6272a4; }
+        .terminal-line .prompt {
+            color: var(--terminal-green);
+            margin-right: 8px;
+        }
 
-        /* Contact Section */
+        .terminal-line .command {
+            color: var(--text-primary);
+        }
+
+        .terminal-line .output {
+            color: var(--text-secondary);
+            width: 100%;
+            margin-top: 4px;
+            white-space: pre-wrap;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            flex: 1;
+            outline: none;
+            caret-color: var(--terminal-green);
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--terminal-green);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .terminal-keyword { color: #ff79c6; }
+        .terminal-type { color: #8be9fd; }
+        .terminal-string { color: #f1fa8c; }
+        .terminal-property { color: #50fa7b; }
+        .terminal-comment { color: #6272a4; }
+
+        /* ===== CONTACT SECTION ===== */
         .contact-content {
             text-align: center;
             max-width: 600px;
@@ -488,7 +762,6 @@
         .social-link:hover {
             color: var(--text-primary);
             background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-4px);
         }
 
         .social-link svg {
@@ -496,7 +769,7 @@
             height: 22px;
         }
 
-        /* Footer */
+        /* ===== FOOTER ===== */
         footer {
             padding: 40px 0;
             border-top: 1px solid var(--glass-border);
@@ -505,7 +778,33 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
+        /* ===== MATRIX EFFECT ===== */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9997;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #matrix-canvas.active {
+            opacity: 1;
+        }
+
+        /* ===== EASTER EGG CONFETTI ===== */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 9996;
+            pointer-events: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -531,18 +830,337 @@
             .btn {
                 justify-content: center;
             }
+
+            .terminal {
+                max-width: 100%;
+            }
+        }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== REVEAL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* ===== SECRETS BUTTON ===== */
+        .secrets-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .secrets-btn.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .secrets-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent);
+        }
+
+        .secrets-btn svg {
+            width: 22px;
+            height: 22px;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .secrets-btn:hover svg {
+            color: var(--accent);
+        }
+
+        /* ===== SECRETS MODAL ===== */
+        .secrets-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .secrets-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .secrets-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .secrets-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Custom scrollbar for secrets modal */
+        .secrets-modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .secrets-modal::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .secrets-modal::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+        }
+
+        .secrets-modal::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        }
+
+        /* Firefox scrollbar */
+        .secrets-modal {
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 rgba(255, 255, 255, 0.05);
+        }
+
+        .secrets-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .secrets-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .secrets-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .secrets-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .secrets-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .secrets-section {
+            margin-bottom: 28px;
+        }
+
+        .secrets-section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .secrets-section-title svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .secrets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .secrets-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .secrets-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .secrets-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .secrets-item-content {
+            flex: 1;
+        }
+
+        .secrets-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .secrets-item-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .secrets-code {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #a5b4fc;
+        }
+
+        .secrets-kbd {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .secrets-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .secrets-modal {
+                padding: 28px;
+            }
+
+            .secrets-title {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
-<body>
+<body class="loading">
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="loader-logo">CD</div>
+        <div class="loader-bar">
+            <div class="loader-progress" id="loader-progress"></div>
+        </div>
+        <div class="loader-text">Initializing experience...</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
+    <!-- Three.js Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Matrix Canvas (Easter Egg) -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Background -->
     <div class="bg-gradient"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <nav>
+    <!-- Navigation -->
+    <nav id="navbar">
         <div class="container">
-            <div class="logo">Cameron Drury</div>
+            <div class="logo" id="logo">Cameron Drury</div>
             <ul class="nav-links">
                 <li><a href="#apps">Apps</a></li>
                 <li><a href="#about">About</a></li>
@@ -551,23 +1169,24 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
+            <div class="hero-content" id="hero-content">
                 <div class="hero-badge">
                     <span class="dot"></span>
                     Available for projects
                 </div>
-                <h1>Crafting delightful iOS and Web experiences</h1>
-                <p>I'm a Fullstack developer passionate about building beautiful, intuitive apps with SwiftUI, React, Vue, Next.js, and more. Currently focused on creating engaging mobile games and web applications.</p>
+                <h1 id="hero-title">Crafting delightful iOS and Web experiences</h1>
+                <p>I'm a <span class="role-text" id="role-text"></span> passionate about building beautiful, intuitive apps with SwiftUI, React, Vue, Next.js, and more.</p>
                 <div class="hero-buttons">
-                    <a href="#apps" class="btn btn-primary">
+                    <a href="#apps" class="btn btn-primary magnetic">
                         View My Work
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </a>
-                    <a href="https://github.com/Cameron-Drury" class="btn btn-secondary" target="_blank">
+                    <a href="https://github.com/Cameron-Drury" class="btn btn-secondary magnetic" target="_blank">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                         </svg>
@@ -578,12 +1197,13 @@
         </div>
     </section>
 
+    <!-- Apps Section -->
     <section id="apps">
         <div class="container">
-            <p class="section-title">Featured Work</p>
-            <h2>Apps I've Built</h2>
+            <p class="section-title reveal">Featured Work</p>
+            <h2 class="reveal">Apps I've Built</h2>
             <div class="apps-grid">
-                <div class="app-card">
+                <div class="app-card reveal" id="ant-card">
                     <img src="idleAntColonyLogo.png" alt="Idle Ant Colony App Icon" class="app-icon-img">
                     <h3>Idle Ant Colony</h3>
                     <p>A relaxing idle game where you build and grow your ant empire. Tap to collect honeydew, unlock unique ant types, prestige for powerful bonuses, and customize your colony with stunning themes.</p>
@@ -601,7 +1221,7 @@
                     </a>
                 </div>
 
-                <div class="app-card">
+                <div class="app-card reveal">
                     <div class="app-icon" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">🚀</div>
                     <h3>Coming Soon</h3>
                     <p>More exciting projects are in development. Stay tuned for new apps that push the boundaries of mobile experiences.</p>
@@ -619,15 +1239,16 @@
         </div>
     </section>
 
+    <!-- About Section -->
     <section id="about">
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
-                    <p class="section-title">About Me</p>
-                    <h2>Passionate About Code</h2>
-                    <p>I'm a developer based in Australia with a love for creating polished, user-friendly applications. My journey in programming has led me to specialize in iOS development, where I combine technical skills with creative design thinking.</p>
-                    <p>When I'm not coding, you'll find me exploring new technologies, playing games, or working on side projects that challenge me to grow as a developer.</p>
-                    <div class="skills">
+                    <p class="section-title reveal">About Me</p>
+                    <h2 class="reveal">Passionate About Code</h2>
+                    <p class="reveal">I'm a developer based in Australia with a love for creating polished, user-friendly applications. My journey in programming has led me to specialize in fullstack development, where I combine technical skills with creative design thinking.</p>
+                    <p class="reveal">When I'm not coding, you'll find me exploring new technologies, playing games, or working on side projects that challenge me to grow as a developer.</p>
+                    <div class="skills" id="skills">
                         <span class="skill">SwiftUI</span>
                         <span class="skill">JavaScript</span>
                         <span class="skill">TypeScript</span>
@@ -640,22 +1261,31 @@
                         <span class="skill">C++</span>
                     </div>
                 </div>
-                <div class="about-visual">
-                    <div class="code-window">
-                        <div class="code-header">
-                            <div class="code-dot red"></div>
-                            <div class="code-dot yellow"></div>
-                            <div class="code-dot green"></div>
+                <div class="about-visual reveal">
+                    <div class="terminal" id="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <span class="terminal-dot red"></span>
+                                <span class="terminal-dot yellow"></span>
+                                <span class="terminal-dot green"></span>
+                            </div>
+                            <span class="terminal-title">cameron@portfolio ~ </span>
                         </div>
-                        <div class="code-content">
-                            <div class="code-line"><span class="code-keyword">struct</span>&nbsp;<span class="code-type">Developer</span>&nbsp;{</div>
-                            <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">let</span>&nbsp;<span class="code-property">name</span>&nbsp;=&nbsp;<span class="code-string">"Cameron"</span></div>
-                            <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">let</span>&nbsp;<span class="code-property">role</span>&nbsp;=&nbsp;<span class="code-string">"Fullstack Dev"</span></div>
-                            <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">let</span>&nbsp;<span class="code-property">passion</span>&nbsp;=&nbsp;<span class="code-string">"SwiftUI"</span></div>
-                            <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">var</span>&nbsp;<span class="code-property">coffee</span>:&nbsp;<span class="code-type">Int</span>&nbsp;=&nbsp;.max</div>
-                            <div class="code-line">}</div>
-                            <div class="code-line"></div>
-                            <div class="code-line"><span class="code-comment">//&nbsp;Always&nbsp;learning</span></div>
+                        <div class="terminal-body" id="terminal-body">
+                            <div class="terminal-line">
+                                <span class="prompt">$</span>
+                                <span class="command">whoami</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="output terminal-property">Cameron Drury</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="output terminal-comment"># Type 'help' for available commands</span>
+                            </div>
+                        </div>
+                        <div class="terminal-input-line" style="padding: 0 20px 20px;">
+                            <span class="prompt" style="color: var(--terminal-green); margin-right: 8px;">$</span>
+                            <input type="text" class="terminal-input" id="terminal-input" placeholder="Type a command..." autocomplete="off" spellcheck="false">
                         </div>
                     </div>
                 </div>
@@ -663,19 +1293,20 @@
         </div>
     </section>
 
+    <!-- Contact Section -->
     <section id="contact">
         <div class="container">
             <div class="contact-content">
-                <p class="section-title">Get In Touch</p>
-                <h2>Let's Build Something Together</h2>
-                <p>Have a project in mind or just want to chat? Feel free to reach out. I'm always open to discussing new opportunities and ideas.</p>
-                <div class="social-links">
-                    <a href="https://github.com/Cameron-Drury" class="social-link" target="_blank" aria-label="GitHub">
+                <p class="section-title reveal">Get In Touch</p>
+                <h2 class="reveal">Let's Build Something Together</h2>
+                <p class="reveal">Have a project in mind or just want to chat? Feel free to reach out. I'm always open to discussing new opportunities and ideas.</p>
+                <div class="social-links reveal">
+                    <a href="https://github.com/Cameron-Drury" class="social-link magnetic" target="_blank" aria-label="GitHub">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                         </svg>
                     </a>
-                    <a href="https://cameron-drury.github.io/idle-ant-colony-support" class="social-link" target="_blank" aria-label="App Support">
+                    <a href="https://cameron-drury.github.io/idle-ant-colony-support" class="social-link magnetic" target="_blank" aria-label="App Support">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -687,10 +1318,749 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 Cameron Drury. Built with SwiftUI vibes.</p>
+            <p>&copy; 2025 Cameron Drury. Crafted with passion.</p>
         </div>
     </footer>
+
+    <!-- Secrets Button -->
+    <button class="secrets-btn" id="secrets-btn" aria-label="View site secrets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+    </button>
+
+    <!-- Secrets Modal -->
+    <div class="secrets-overlay" id="secrets-overlay"></div>
+    <div class="secrets-modal" id="secrets-modal">
+        <button class="secrets-close" id="secrets-close" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+
+        <h3 class="secrets-title">🔮 Site Secrets</h3>
+        <p class="secrets-subtitle">Hidden features and tricks you might have missed!</p>
+
+        <!-- Terminal Commands Section -->
+        <div class="secrets-section">
+            <div class="secrets-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="4 17 10 11 4 5"/>
+                    <line x1="12" y1="19" x2="20" y2="19"/>
+                </svg>
+                Terminal Commands
+            </div>
+            <div class="secrets-list">
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">💻</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Interactive Terminal</div>
+                        <div class="secrets-item-desc">
+                            Type in the terminal in the About section! Try:
+                            <span class="secrets-code">help</span>
+                            <span class="secrets-code">about</span>
+                            <span class="secrets-code">skills</span>
+                            <span class="secrets-code">projects</span>
+                            <span class="secrets-code">contact</span>
+                            <span class="secrets-code">github</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">🟢</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Matrix Rain</div>
+                        <div class="secrets-item-desc">
+                            Type <span class="secrets-code">matrix</span> in the terminal to activate the Matrix effect!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Easter Eggs Section -->
+        <div class="secrets-section">
+            <div class="secrets-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+                Easter Eggs
+            </div>
+            <div class="secrets-list">
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">🎮</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Konami Code</div>
+                        <div class="secrets-item-desc">
+                            Enter the classic code on your keyboard:<br>
+                            <span class="secrets-kbd">↑</span>
+                            <span class="secrets-kbd">↑</span>
+                            <span class="secrets-kbd">↓</span>
+                            <span class="secrets-kbd">↓</span>
+                            <span class="secrets-kbd">←</span>
+                            <span class="secrets-kbd">→</span>
+                            <span class="secrets-kbd">←</span>
+                            <span class="secrets-kbd">→</span>
+                            <span class="secrets-kbd">B</span>
+                            <span class="secrets-kbd">A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">🐜</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Ant Clicker</div>
+                        <div class="secrets-item-desc">
+                            Rapidly click the Idle Ant Colony card 5 times for a surprise celebration!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Features Section -->
+        <div class="secrets-section">
+            <div class="secrets-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Hidden Interactions
+            </div>
+            <div class="secrets-list">
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">✨</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Logo Scramble</div>
+                        <div class="secrets-item-desc">
+                            Hover over "Cameron Drury" in the navbar for a cool text scramble effect!
+                        </div>
+                    </div>
+                </div>
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">🎴</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">3D Cards</div>
+                        <div class="secrets-item-desc">
+                            Move your mouse around the project cards to see them tilt in 3D!
+                        </div>
+                    </div>
+                </div>
+                <div class="secrets-item">
+                    <div class="secrets-item-icon">🧲</div>
+                    <div class="secrets-item-content">
+                        <div class="secrets-item-title">Magnetic Buttons</div>
+                        <div class="secrets-item-desc">
+                            Hover near the buttons and watch them follow your cursor with a magnetic effect!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ===== INITIALIZATION =====
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ===== PRELOADER =====
+        const preloader = document.getElementById('preloader');
+        const loaderProgress = document.getElementById('loader-progress');
+
+        let progress = 0;
+        const loadInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loadInterval);
+                setTimeout(() => {
+                    gsap.to(preloader, {
+                        yPercent: -100,
+                        duration: 0.8,
+                        ease: 'power4.inOut',
+                        onComplete: () => {
+                            preloader.classList.add('hidden');
+                            document.body.classList.remove('loading');
+                            initAnimations();
+                        }
+                    });
+                }, 300);
+            }
+            loaderProgress.style.width = progress + '%';
+        }, 100);
+
+        // ===== CUSTOM CURSOR =====
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover effects
+        document.querySelectorAll('a, button, .btn, .app-card, .skill, .tag').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+        });
+
+        document.addEventListener('mousedown', () => cursorRing.classList.add('click'));
+        document.addEventListener('mouseup', () => cursorRing.classList.remove('click'));
+
+        // ===== SCROLL PROGRESS =====
+        const scrollProgress = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+
+        // ===== THREE.JS PARTICLES =====
+        const canvas = document.getElementById('particles-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Create particles
+        const particleCount = 1500;
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
+
+        const colorPalette = [
+            new THREE.Color('#6366f1'),
+            new THREE.Color('#8b5cf6'),
+            new THREE.Color('#3b82f6'),
+            new THREE.Color('#06b6d4'),
+            new THREE.Color('#ec4899')
+        ];
+
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 50;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+
+            const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+            colors[i * 3] = color.r;
+            colors[i * 3 + 1] = color.g;
+            colors[i * 3 + 2] = color.b;
+
+            sizes[i] = Math.random() * 2 + 0.5;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8,
+            sizeAttenuation: true
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        camera.position.z = 20;
+
+        let particleMouseX = 0, particleMouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            particleMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            particleMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            particles.rotation.x += 0.0003;
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += particleMouseY * 0.0005;
+            particles.rotation.y += particleMouseX * 0.0005;
+            renderer.render(scene, camera);
+        }
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ===== GSAP ANIMATIONS =====
+        function initAnimations() {
+            // Hero content
+            gsap.to('#hero-content', {
+                opacity: 1,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+
+            // Split text animation for h1
+            const title = document.getElementById('hero-title');
+            const text = title.textContent;
+            title.innerHTML = text.split('').map(char =>
+                `<span class="char">${char === ' ' ? '&nbsp;' : char}</span>`
+            ).join('');
+
+            gsap.to('#hero-title .char', {
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+                duration: 0.8,
+                stagger: 0.02,
+                ease: 'back.out(1.7)',
+                delay: 0.3
+            });
+
+            // Typewriter effect for role
+            const roles = ['Fullstack Developer', 'iOS Engineer', 'React Enthusiast', 'SwiftUI Craftsman', 'TypeScript Developer'];
+            let roleIndex = 0;
+            const roleText = document.getElementById('role-text');
+
+            function typeRole() {
+                const role = roles[roleIndex];
+                let charIndex = 0;
+                roleText.textContent = '';
+
+                const typeInterval = setInterval(() => {
+                    if (charIndex < role.length) {
+                        roleText.textContent += role[charIndex];
+                        charIndex++;
+                    } else {
+                        clearInterval(typeInterval);
+                        setTimeout(() => {
+                            const deleteInterval = setInterval(() => {
+                                if (roleText.textContent.length > 0) {
+                                    roleText.textContent = roleText.textContent.slice(0, -1);
+                                } else {
+                                    clearInterval(deleteInterval);
+                                    roleIndex = (roleIndex + 1) % roles.length;
+                                    setTimeout(typeRole, 300);
+                                }
+                            }, 30);
+                        }, 2000);
+                    }
+                }, 80);
+            }
+            setTimeout(typeRole, 1500);
+
+            // Scroll reveal animations
+            gsap.utils.toArray('.reveal').forEach(elem => {
+                gsap.fromTo(elem,
+                    { opacity: 0, y: 30 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: elem,
+                            start: 'top 85%',
+                            toggleActions: 'play none none none'
+                        }
+                    }
+                );
+            });
+
+            // Skills animation
+            gsap.utils.toArray('.skill').forEach((skill, i) => {
+                gsap.to(skill, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    delay: i * 0.1,
+                    ease: 'back.out(1.7)',
+                    scrollTrigger: {
+                        trigger: '#skills',
+                        start: 'top 80%'
+                    }
+                });
+            });
+
+            // Parallax orbs
+            gsap.to('.orb-1', {
+                y: -150,
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 1
+                }
+            });
+
+            gsap.to('.orb-2', {
+                y: -100,
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 1.5
+                }
+            });
+
+            gsap.to('.orb-3', {
+                y: -50,
+                x: 50,
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 2
+                }
+            });
+        }
+
+        // ===== MAGNETIC BUTTONS =====
+        document.querySelectorAll('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                gsap.to(btn, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+            });
+        });
+
+        // ===== 3D TILT CARDS =====
+        document.querySelectorAll('.app-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 15;
+                const rotateY = (centerX - x) / 15;
+
+                gsap.to(card, {
+                    rotateX: -rotateX,
+                    rotateY: rotateY,
+                    transformPerspective: 1000,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    rotateX: 0,
+                    rotateY: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.5)'
+                });
+            });
+        });
+
+        // ===== NAVBAR SCROLL EFFECT =====
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ===== LOGO SCRAMBLE EFFECT =====
+        const logo = document.getElementById('logo');
+        const originalText = logo.textContent;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+
+        logo.addEventListener('mouseenter', () => {
+            let iterations = 0;
+            const interval = setInterval(() => {
+                logo.textContent = originalText
+                    .split('')
+                    .map((char, index) => {
+                        if (index < iterations) return originalText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join('');
+
+                if (iterations >= originalText.length) clearInterval(interval);
+                iterations += 1/3;
+            }, 30);
+        });
+
+        // ===== INTERACTIVE TERMINAL =====
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalBody = document.getElementById('terminal-body');
+
+        const commands = {
+            help: `<span class="terminal-comment">Available commands:</span>
+  <span class="terminal-property">about</span>      - Learn about me
+  <span class="terminal-property">skills</span>     - View my tech stack
+  <span class="terminal-property">projects</span>   - List my projects
+  <span class="terminal-property">contact</span>    - Get contact info
+  <span class="terminal-property">github</span>     - Open GitHub profile
+  <span class="terminal-property">matrix</span>     - ??? (Try it!)
+  <span class="terminal-property">clear</span>      - Clear terminal
+  <span class="terminal-property">sudo</span>       - Nice try ;)`,
+            about: `<span class="terminal-type">Name:</span> Cameron Drury
+<span class="terminal-type">Role:</span> Fullstack Developer
+<span class="terminal-type">Location:</span> Australia
+<span class="terminal-type">Passion:</span> Building iOS & Web apps
+<span class="terminal-type">Coffee:</span> <span class="terminal-keyword">Infinity</span>`,
+            skills: `<span class="terminal-keyword">Frontend:</span> React, Vue, Next.js, SwiftUI
+<span class="terminal-keyword">Backend:</span> Express, Node.js
+<span class="terminal-keyword">Languages:</span> TypeScript, JavaScript, Swift, C++
+<span class="terminal-keyword">Mobile:</span> iOS, SwiftUI, SpriteKit`,
+            projects: `<span class="terminal-string">1. Idle Ant Colony</span> - iOS idle game
+   <span class="terminal-comment"># Available on App Store</span>
+
+<span class="terminal-string">2. More coming soon...</span>
+   <span class="terminal-comment"># Stay tuned!</span>`,
+            contact: `<span class="terminal-property">GitHub:</span> github.com/Cameron-Drury
+<span class="terminal-property">Portfolio:</span> cameron-drury.github.io`,
+            github: 'Opening GitHub...',
+            sudo: '<span class="terminal-keyword">Nice try!</span> But you need root access for that. 😄',
+            matrix: '<span class="terminal-string">Entering the Matrix...</span>',
+            clear: 'CLEAR'
+        };
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.toLowerCase().trim();
+                terminalInput.value = '';
+
+                // Add command to terminal
+                const cmdLine = document.createElement('div');
+                cmdLine.className = 'terminal-line';
+                cmdLine.innerHTML = `<span class="prompt">$</span><span class="command">${command}</span>`;
+                terminalBody.appendChild(cmdLine);
+
+                // Process command
+                if (command === 'clear') {
+                    terminalBody.innerHTML = '';
+                } else if (commands[command]) {
+                    const outputLine = document.createElement('div');
+                    outputLine.className = 'terminal-line';
+                    outputLine.innerHTML = `<span class="output">${commands[command]}</span>`;
+                    terminalBody.appendChild(outputLine);
+
+                    if (command === 'github') {
+                        window.open('https://github.com/Cameron-Drury', '_blank');
+                    }
+
+                    if (command === 'matrix') {
+                        activateMatrix();
+                    }
+                } else if (command) {
+                    const outputLine = document.createElement('div');
+                    outputLine.className = 'terminal-line';
+                    outputLine.innerHTML = `<span class="output"><span class="terminal-keyword">Command not found:</span> ${command}. Type 'help' for available commands.</span>`;
+                    terminalBody.appendChild(outputLine);
+                }
+
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }
+        });
+
+        // ===== MATRIX EASTER EGG =====
+        function activateMatrix() {
+            const matrixCanvas = document.getElementById('matrix-canvas');
+            const ctx = matrixCanvas.getContext('2d');
+
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            matrixCanvas.classList.add('active');
+
+            const columns = matrixCanvas.width / 20;
+            const drops = Array(Math.floor(columns)).fill(1);
+            const matrixChars = 'アイウエオカキクケコサシスセソタチツテト0123456789ABCDEF';
+
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+                ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+                ctx.fillStyle = '#0F0';
+                ctx.font = '15px JetBrains Mono';
+
+                drops.forEach((y, i) => {
+                    const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    ctx.fillText(char, i * 20, y * 20);
+
+                    if (y * 20 > matrixCanvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                });
+            }
+
+            const matrixInterval = setInterval(drawMatrix, 33);
+
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                matrixCanvas.classList.remove('active');
+                ctx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            }, 8000);
+        }
+
+        // ===== KONAMI CODE EASTER EGG =====
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    createConfetti();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        function createConfetti() {
+            const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#3b82f6', '#22c55e', '#f59e0b'];
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+
+                gsap.to(confetti, {
+                    y: window.innerHeight + 100,
+                    x: (Math.random() - 0.5) * 200,
+                    rotation: Math.random() * 720,
+                    duration: Math.random() * 2 + 2,
+                    ease: 'power1.out',
+                    onComplete: () => confetti.remove()
+                });
+            }
+        }
+
+        // ===== ANT CARD MINI-GAME EASTER EGG =====
+        let antClickCount = 0;
+        let antClickTimer;
+        const antCard = document.getElementById('ant-card');
+
+        antCard.addEventListener('click', (e) => {
+            if (e.target.closest('.app-link')) return;
+
+            antClickCount++;
+            clearTimeout(antClickTimer);
+
+            if (antClickCount >= 5) {
+                // Trigger celebration
+                createConfetti();
+                antClickCount = 0;
+            }
+
+            antClickTimer = setTimeout(() => antClickCount = 0, 500);
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: { y: target, offsetY: 80 },
+                        ease: 'power2.inOut'
+                    });
+                }
+            });
+        });
+
+        // ===== SECRETS BUTTON & MODAL =====
+        const secretsBtn = document.getElementById('secrets-btn');
+        const secretsOverlay = document.getElementById('secrets-overlay');
+        const secretsModal = document.getElementById('secrets-modal');
+        const secretsClose = document.getElementById('secrets-close');
+        const heroSection = document.querySelector('.hero');
+
+        // Show button after scrolling past hero
+        function toggleSecretsBtn() {
+            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+            if (window.scrollY > heroBottom * 0.5) {
+                secretsBtn.classList.add('visible');
+            } else {
+                secretsBtn.classList.remove('visible');
+            }
+        }
+
+        window.addEventListener('scroll', toggleSecretsBtn);
+        toggleSecretsBtn(); // Check on load
+
+        // Open modal
+        secretsBtn.addEventListener('click', () => {
+            secretsOverlay.classList.add('active');
+            secretsModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close modal
+        function closeSecretsModal() {
+            secretsOverlay.classList.remove('active');
+            secretsModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        secretsClose.addEventListener('click', closeSecretsModal);
+        secretsOverlay.addEventListener('click', closeSecretsModal);
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && secretsModal.classList.contains('active')) {
+                closeSecretsModal();
+            }
+        });
+
+        // Add cursor hover effect to secrets elements
+        document.querySelectorAll('.secrets-btn, .secrets-close, .secrets-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 </body>
 </html>
