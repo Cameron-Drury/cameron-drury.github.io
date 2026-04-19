@@ -25,6 +25,7 @@
       --bg-warm:     #f9ede1;   /* warm cream base */
       --bg-peach:    #f5c9a8;   /* peachy middle */
       --bg-rose:     #e89a9a;   /* rose edges */
+      --bg-blue:     #a8cfe0;   /* pastel blue accent */
       --ink:         #6b1f35;   /* deep burgundy text */
       --ink-soft:    #8b3d55;   /* lighter burgundy */
       --gold:        #c08552;   /* warm gold accent */
@@ -53,10 +54,19 @@
       background:
         radial-gradient(ellipse at 20% 10%, var(--bg-rose) 0%, transparent 50%),
         radial-gradient(ellipse at 80% 90%, var(--bg-peach) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 20%, var(--bg-blue) 0%, transparent 45%),
+        radial-gradient(ellipse at 30% 80%, var(--bg-blue) 0%, transparent 40%),
         radial-gradient(ellipse at 50% 50%, var(--bg-warm) 0%, var(--bg-warm) 100%);
+      background-size: 200% 200%;
       background-attachment: fixed;  /* gradient stays put while scrolling */
+      animation: gradientShift 12s ease-in-out infinite;
       position: relative;
       cursor: default;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
     }
 
     /* grainy paper texture overlay — gives it that handmade feel */
@@ -142,6 +152,12 @@
     .divider .dot {
       color: var(--heart);
       font-size: 1rem;
+      animation: heartPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: 0.7; }
     }
 
     /* ==========================================================
@@ -168,6 +184,13 @@
       font-style: italic;
       color: var(--heart);
       position: relative;
+      text-shadow: 0 0 30px rgba(212, 81, 107, 0.3), 0 0 60px rgba(212, 81, 107, 0.1);
+      animation: nameGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes nameGlow {
+      0%, 100% { text-shadow: 0 0 30px rgba(212, 81, 107, 0.3), 0 0 60px rgba(212, 81, 107, 0.1); }
+      50%      { text-shadow: 0 0 40px rgba(212, 81, 107, 0.5), 0 0 80px rgba(212, 81, 107, 0.2); }
     }
 
     /* each letter starts invisible + below, then fades up into place */
@@ -343,6 +366,40 @@
       100% { transform: translate(-50%, -200%) scale(0.8); opacity: 0; }
     }
 
+    /* cursor heart trail */
+    .trail-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99;
+      color: var(--heart);
+      animation: trailFade 1s ease-out forwards;
+    }
+
+    @keyframes trailFade {
+      0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
+      100% { transform: translate(-50%, -80%) scale(0.2); opacity: 0; }
+    }
+
+    /* sparkle particles */
+    .sparkle {
+      position: absolute;
+      bottom: -10px;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+      font-size: 10px;
+      color: var(--gold);
+      opacity: 0;
+    }
+
+    /* days counter breakdown */
+    .days-breakdown {
+      font-family: var(--font-hand);
+      font-size: 1rem;
+      color: var(--ink-soft);
+      margin-top: 0.3rem;
+      display: block;
+    }
+
     /* generic fade-in */
     @keyframes fadeIn {
       to { opacity: 1; }
@@ -389,6 +446,7 @@
     <div class="days-counter">
       <span class="days-number" id="daysNumber">—</span>
       <span class="days-label">days of loving you</span>
+      <span class="days-breakdown" id="daysBreakdown"></span>
     </div>
 
     <div class="signature">
@@ -434,6 +492,17 @@
     // but read through so you understand what's going on
     // ==========================================================
 
+    // ---- time-aware greeting ----
+    (function() {
+      const hour = new Date().getHours();
+      let greeting;
+      if (hour < 12)      greeting = "good morning, my love —";
+      else if (hour < 17) greeting = "good afternoon, my love —";
+      else if (hour < 21) greeting = "good evening, my love —";
+      else                greeting = "goodnight, my love —";
+      document.querySelector(".greeting").textContent = greeting;
+    })();
+
     // ---- letter-by-letter reveal of the centerpiece ----
     // we take each character of the text and wrap it in a span
     // then we stagger the animation so each letter appears one after another
@@ -459,15 +528,36 @@
     splitAndAnimate(LINE_2, document.getElementById("line2"), 0.8 + LINE_1.length * 0.06 + 0.2);
 
     // ---- days counter ----
-    // calculate how many days since the start date
+    // calculate how many days since the start date, plus a nice breakdown
     function updateDaysCounter() {
       const start = new Date(START_DATE);
       const now = new Date();
-      const diffMs = now - start;  // milliseconds between the two dates
+      const diffMs = now - start;
       const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      // only show a number if it's positive (the start date hasn't been set to the future)
       document.getElementById("daysNumber").textContent =
         diffDays >= 0 ? diffDays.toLocaleString() : "—";
+
+      // months + remaining days breakdown
+      if (diffDays >= 0) {
+        let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+        let remainDays = now.getDate() - start.getDate();
+        if (remainDays < 0) {
+          months--;
+          const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+          remainDays += prevMonth.getDate();
+        }
+        let parts = [];
+        if (months >= 12) {
+          const years = Math.floor(months / 12);
+          months = months % 12;
+          parts.push(years + (years === 1 ? " year" : " years"));
+        }
+        if (months > 0) parts.push(months + (months === 1 ? " month" : " months"));
+        if (remainDays > 0) parts.push(remainDays + (remainDays === 1 ? " day" : " days"));
+        if (parts.length > 0) {
+          document.getElementById("daysBreakdown").textContent = "(" + parts.join(", ") + ")";
+        }
+      }
     }
     updateDaysCounter();
 
@@ -519,6 +609,35 @@
     for (let i = 0; i < 8; i++) {
       setTimeout(spawnBackgroundHeart, i * 300);
     }
+
+    // ---- sparkle particles mixed with hearts ----
+    function spawnSparkle() {
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      sparkle.textContent = ["✦", "✧", "·"][Math.floor(Math.random() * 3)];
+      sparkle.style.left = Math.random() * 100 + "vw";
+      sparkle.style.fontSize = (8 + Math.random() * 10) + "px";
+      sparkle.style.animationDuration = (10 + Math.random() * 10) + "s";
+      document.getElementById("heartsBg").appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 21000);
+    }
+    setInterval(spawnSparkle, 900);
+
+    // ---- cursor heart trail (desktop only) ----
+    let lastTrail = 0;
+    document.addEventListener("mousemove", (e) => {
+      const now = Date.now();
+      if (now - lastTrail < 80) return;  // throttle so it's not overwhelming
+      lastTrail = now;
+      const heart = document.createElement("div");
+      heart.className = "trail-heart";
+      heart.textContent = ["♡", "✧"][Math.floor(Math.random() * 2)];
+      heart.style.left = e.clientX + "px";
+      heart.style.top = e.clientY + "px";
+      heart.style.fontSize = (0.5 + Math.random() * 0.6) + "rem";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    });
 
     // ---- click-to-spawn hearts ----
     // every time you click or tap, hearts burst out from that spot
