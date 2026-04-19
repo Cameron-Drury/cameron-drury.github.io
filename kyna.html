@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>for kyna ♡</title>
+
+  <!-- favicon: little heart emoji so the browser tab is cute too -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♡</text></svg>" />
+
+  <!-- pulling in 3 fonts from google fonts -->
+  <!-- Italiana = tall, elegant, romantic display font for the big centerpiece -->
+  <!-- Cormorant Garamond = classy serif for body text -->
+  <!-- Caveat = handwritten, like i wrote it myself -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================
+       COLOR + FONT VARIABLES
+       change these if you want a different vibe
+       ========================================================== */
+    :root {
+      --bg-warm:     #f9ede1;   /* warm cream base */
+      --bg-peach:    #f5c9a8;   /* peachy middle */
+      --bg-rose:     #e89a9a;   /* rose edges */
+      --ink:         #6b1f35;   /* deep burgundy text */
+      --ink-soft:    #8b3d55;   /* lighter burgundy */
+      --gold:        #c08552;   /* warm gold accent */
+      --heart:       #d4516b;   /* heart red */
+      --font-display: 'Italiana', serif;
+      --font-body:    'Cormorant Garamond', serif;
+      --font-hand:    'Caveat', cursive;
+    }
+
+    /* reset the default browser shit */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100vh;
+      overflow-x: hidden;      /* no horizontal scrolling ever */
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      /* layered radial gradients = that soft sunset glow vibe */
+      background:
+        radial-gradient(ellipse at 20% 10%, var(--bg-rose) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, var(--bg-peach) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, var(--bg-warm) 0%, var(--bg-warm) 100%);
+      background-attachment: fixed;  /* gradient stays put while scrolling */
+      position: relative;
+      cursor: default;
+    }
+
+    /* grainy paper texture overlay — gives it that handmade feel */
+    /* it's an svg noise filter encoded as a data uri so we don't need an image file */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;  /* so clicks pass through it */
+      opacity: 0.15;
+      z-index: 1;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.5'/></svg>");
+    }
+
+    /* ==========================================================
+       FLOATING HEARTS IN THE BACKGROUND
+       they drift upward slowly and fade
+       ========================================================== */
+    .hearts-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .heart-bg {
+      position: absolute;
+      bottom: -50px;
+      color: var(--heart);
+      opacity: 0;
+      animation: floatUp linear infinite;
+      font-size: 20px;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg) scale(1);    opacity: 0; }
+      10%  { opacity: 0.6; }
+      50%  { transform: translateY(-50vh) rotate(15deg) scale(1.1); }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-110vh) rotate(-10deg) scale(0.8); opacity: 0; }
+    }
+
+    /* ==========================================================
+       MAIN LAYOUT
+       ========================================================== */
+    main {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    /* little note up top, like a letter header */
+    .greeting {
+      font-family: var(--font-hand);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--ink-soft);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeIn 1.2s ease 0.3s forwards;
+    }
+
+    /* decorative line with a heart in the middle */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      opacity: 0;
+      animation: fadeIn 1.2s ease 0.5s forwards;
+    }
+    .divider .line {
+      width: 60px;
+      height: 1px;
+      background: var(--ink-soft);
+    }
+    .divider .dot {
+      color: var(--heart);
+      font-size: 1rem;
+    }
+
+    /* ==========================================================
+       THE BIG CENTERPIECE — "i love you, kyna"
+       each letter animates in one by one with a stagger
+       ========================================================== */
+    .centerpiece {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 12vw, 9rem);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin: 1rem 0;
+      max-width: 1000px;
+    }
+
+    .centerpiece .line-1,
+    .centerpiece .line-2 {
+      display: block;
+    }
+
+    .centerpiece .line-2 {
+      font-style: italic;
+      color: var(--heart);
+      position: relative;
+    }
+
+    /* each letter starts invisible + below, then fades up into place */
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: letterIn 0.8s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+    }
+
+    /* space character needs special treatment so it doesn't collapse */
+    .letter.space {
+      display: inline-block;
+      width: 0.25em;
+    }
+
+    @keyframes letterIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* subtitle below the centerpiece */
+    .subtitle {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      color: var(--ink-soft);
+      max-width: 520px;
+      margin: 2rem auto 0;
+      line-height: 1.5;
+      opacity: 0;
+      animation: fadeIn 1.5s ease 3s forwards;
+    }
+
+    /* ==========================================================
+       ROTATING MESSAGES — "the little things"
+       ========================================================== */
+    .reasons {
+      margin-top: 4rem;
+      opacity: 0;
+      animation: fadeIn 1.5s ease 3.8s forwards;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .reasons-label {
+      font-family: var(--font-hand);
+      font-size: 1.3rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .reasons-label::before,
+    .reasons-label::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+
+    .reason-display {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-style: italic;
+      color: var(--ink);
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      transition: opacity 0.8s ease;
+    }
+
+    .reason-display.fading {
+      opacity: 0;
+    }
+
+    /* ==========================================================
+       DAYS COUNTER
+       ========================================================== */
+    .days-counter {
+      margin-top: 3rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--ink-soft);
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      animation: fadeIn 1.5s ease 4.3s forwards;
+    }
+
+    .days-number {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 5rem);
+      color: var(--heart);
+      line-height: 1;
+      display: block;
+    }
+
+    .days-label {
+      font-family: var(--font-hand);
+      font-size: 1.2rem;
+      color: var(--ink-soft);
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    /* ==========================================================
+       SIGN OFF — like a letter signature
+       ========================================================== */
+    .signature {
+      margin-top: 4rem;
+      font-family: var(--font-hand);
+      font-size: 1.5rem;
+      color: var(--ink);
+      opacity: 0;
+      animation: fadeIn 1.5s ease 4.8s forwards;
+    }
+    .signature .from {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-weight: 300;
+      display: block;
+      font-size: 1rem;
+      color: var(--ink-soft);
+      margin-bottom: 0.3rem;
+    }
+    .signature .name {
+      font-size: 2.5rem;
+      color: var(--heart);
+    }
+
+    /* little hint at the bottom */
+    .hint {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-hand);
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      opacity: 0;
+      animation: fadeIn 2s ease 5.5s forwards;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* ==========================================================
+       CLICK-SPAWNED HEARTS
+       these are added by JS when you click anywhere
+       ========================================================== */
+    .click-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      font-size: 1.5rem;
+      color: var(--heart);
+      animation: clickHeart 1.5s ease-out forwards;
+    }
+
+    @keyframes clickHeart {
+      0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+      20%  { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+      100% { transform: translate(-50%, -200%) scale(0.8); opacity: 0; }
+    }
+
+    /* generic fade-in */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* respect reduced motion settings for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- floating hearts float around in the background -->
+  <div class="hearts-bg" id="heartsBg" aria-hidden="true"></div>
+
+  <main>
+    <p class="greeting">hi, my love —</p>
+
+    <div class="divider" aria-hidden="true">
+      <span class="line"></span>
+      <span class="dot">♡</span>
+      <span class="line"></span>
+    </div>
+
+    <h1 class="centerpiece">
+      <span class="line-1" id="line1"></span>
+      <span class="line-2" id="line2"></span>
+    </h1>
+
+    <p class="subtitle">
+      made this little corner of the internet just for you.
+      open it whenever you need a reminder.
+    </p>
+
+    <section class="reasons" aria-live="polite">
+      <div class="reasons-label">a few little things</div>
+      <div class="reason-display" id="reasonDisplay"></div>
+    </section>
+
+    <div class="days-counter">
+      <span class="days-number" id="daysNumber">—</span>
+      <span class="days-label">days of loving you</span>
+    </div>
+
+    <div class="signature">
+      <span class="from">always yours,</span>
+      <span class="name">cam</span>
+    </div>
+  </main>
+
+  <p class="hint">✧ click anywhere ✧</p>
+
+  <script>
+    // ==========================================================
+    // CUSTOMIZE THIS SECTION — this is the stuff to personalize
+    // ==========================================================
+
+    // the big text. keep it short and sweet.
+    const LINE_1 = "i love you,";
+    const LINE_2 = "kyna";
+
+    // the date you want to count from. format: YYYY-MM-DD
+    // change this to your anniversary or first-date or whenever
+    const START_DATE = "2025-11-27";
+
+    // little things you love about her — add as many as you want
+    // these rotate through one by one every few seconds
+    const REASONS = [
+      "the snart — you know exactly what you did",
+      "every random little song you make up out of nowhere",
+      "your laugh, every single time",
+      "the way you look at me like i'm the only person in the room",
+      "how you never judge me, not even once",
+      "how you remind me you love me even when i don't ask",
+      "your heart — the biggest, softest, most beautiful thing about you",
+      "every stupid inside joke that only we get",
+      "how you make even the worst days feel okay",
+      "the way you say my name",
+      "how safe i feel when i'm with you",
+      "you, just exactly as you are",
+    ];
+
+    // ==========================================================
+    // the rest is the logic — you shouldn't need to touch it
+    // but read through so you understand what's going on
+    // ==========================================================
+
+    // ---- letter-by-letter reveal of the centerpiece ----
+    // we take each character of the text and wrap it in a span
+    // then we stagger the animation so each letter appears one after another
+    function splitAndAnimate(text, element, startDelay) {
+      const chars = text.split("");
+      chars.forEach((char, i) => {
+        const span = document.createElement("span");
+        // spaces get special treatment so they don't collapse
+        if (char === " ") {
+          span.className = "letter space";
+          span.innerHTML = "&nbsp;";
+        } else {
+          span.className = "letter";
+          span.textContent = char;
+        }
+        // each letter waits a bit longer than the one before = stagger effect
+        span.style.animationDelay = (startDelay + i * 0.06) + "s";
+        element.appendChild(span);
+      });
+    }
+
+    splitAndAnimate(LINE_1, document.getElementById("line1"), 0.8);
+    splitAndAnimate(LINE_2, document.getElementById("line2"), 0.8 + LINE_1.length * 0.06 + 0.2);
+
+    // ---- days counter ----
+    // calculate how many days since the start date
+    function updateDaysCounter() {
+      const start = new Date(START_DATE);
+      const now = new Date();
+      const diffMs = now - start;  // milliseconds between the two dates
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      // only show a number if it's positive (the start date hasn't been set to the future)
+      document.getElementById("daysNumber").textContent =
+        diffDays >= 0 ? diffDays.toLocaleString() : "—";
+    }
+    updateDaysCounter();
+
+    // ---- rotating reasons ----
+    // pick a random reason, show it, wait, fade out, swap, fade in, repeat forever
+    const reasonEl = document.getElementById("reasonDisplay");
+    let lastIndex = -1;
+
+    function pickReason() {
+      // pick a random index that isn't the same as the last one
+      let i;
+      do {
+        i = Math.floor(Math.random() * REASONS.length);
+      } while (i === lastIndex && REASONS.length > 1);
+      lastIndex = i;
+      return REASONS[i];
+    }
+
+    function cycleReason() {
+      reasonEl.classList.add("fading");        // fade out
+      setTimeout(() => {
+        reasonEl.textContent = pickReason();   // swap text while invisible
+        reasonEl.classList.remove("fading");   // fade back in
+      }, 800);
+    }
+
+    // set the first one immediately so there's no empty space
+    reasonEl.textContent = pickReason();
+    // then cycle every 4 seconds forever
+    setInterval(cycleReason, 4000);
+
+    // ---- background floating hearts ----
+    // spawn a heart at a random x position, give it a random animation duration
+    function spawnBackgroundHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart-bg";
+      heart.textContent = "♡";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = (14 + Math.random() * 20) + "px";
+      heart.style.animationDuration = (8 + Math.random() * 8) + "s";
+      document.getElementById("heartsBg").appendChild(heart);
+      // clean up after it's done floating so we don't leak memory
+      setTimeout(() => heart.remove(), 17000);
+    }
+
+    // spawn one every 600ms for ambient effect
+    setInterval(spawnBackgroundHeart, 600);
+    // spawn a bunch right away so the page isn't empty on load
+    for (let i = 0; i < 8; i++) {
+      setTimeout(spawnBackgroundHeart, i * 300);
+    }
+
+    // ---- click-to-spawn hearts ----
+    // every time you click or tap, hearts burst out from that spot
+    document.addEventListener("click", (e) => {
+      // spawn a cluster of 5 hearts with slight offsets
+      for (let i = 0; i < 5; i++) {
+        const heart = document.createElement("div");
+        heart.className = "click-heart";
+        heart.textContent = "♡";
+        const offsetX = (Math.random() - 0.5) * 60;  // -30px to +30px
+        const offsetY = (Math.random() - 0.5) * 40;
+        heart.style.left = (e.clientX + offsetX) + "px";
+        heart.style.top  = (e.clientY + offsetY) + "px";
+        heart.style.fontSize = (1 + Math.random()) + "rem";
+        heart.style.animationDelay = (i * 0.05) + "s";
+        document.body.appendChild(heart);
+        // remove from DOM after animation finishes
+        setTimeout(() => heart.remove(), 1800);
+      }
+    });
+  </script>
+</body>
+</html>
