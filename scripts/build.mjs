@@ -36,7 +36,7 @@ const games = {
     status: "Coming soon",
     icon: "game-central.webp",
     description:
-      "A different world for every mood. Explore, build, race and experiment in one offline collection for iPhone.",
+      "A different world for every mood. Explore, build, race and experiment in 12 offline games for iPhone and iPad.",
   },
 };
 function header(active) {
@@ -162,7 +162,7 @@ const features = {
     ],
     [
       "Take your worlds with you.",
-      "The collection works offline, with artwork included in the app and progress saved on your iPhone. No account needed.",
+      "The collection works offline, with artwork included in the app and progress saved on your device. Play natively on iPhone and iPad. No account needed.",
     ],
     [
       "Keep your favourites close.",
@@ -180,7 +180,7 @@ for (const [slug, game] of Object.entries(games)) {
         ["Extras", "Ads & in-app purchases"],
       ]
     : [
-        ["Platform", "iPhone · iOS 18+"],
+        ["Platform", "iPhone & iPad · iOS/iPadOS 18+"],
         ["Collection", "12 original worlds"],
         ["Connection", "Play offline"],
         ["Availability", "Coming soon"],
@@ -215,7 +215,7 @@ for (const [slug, game] of Object.entries(games)) {
     `/games/${slug}/`,
     game.name,
     game.description,
-    `${breadcrumb(game.name)}<div class="wrap product-hero"><div><div class="eyebrow">${game.type}</div><h1>${ant ? "Small colony.<br>Big ambition." : "Your next world<br>is one tap away."}</h1><p>${game.description}</p><div class="actions">${ant ? button("View on the App Store", store, true) : '<span class="pill">Coming soon to iPhone</span>'}${button("Player support", `/support/${slug}/`)}</div>${!ant ? '<p class="notice">Game Central is being prepared for the App Store. Explore the collection here and check back for its release.</p>' : '<p class="form-note">Free to download. Includes advertising and optional in-app purchases.</p>'}</div><div class="product-image ${ant ? "ant-image" : ""}">${image(game.icon, game.name + " app artwork", 'width="640" height="640" fetchpriority="high"')}<div class="product-caption">${game.name} / Drury Module</div></div></div><dl class="wrap fact-strip">${facts.map(([key, value]) => `<div><dt>${key}</dt><dd>${value}</dd></div>`).join("")}</dl><section class="section wrap"><div class="section-head"><div><div class="eyebrow">Made for your kind of play</div><h2>${ant ? "A little more. Every day." : "Stay curious. Keep playing."}</h2></div></div><div class="feature-grid">${features[slug].map(([title, desc], i) => `<article><span class="number">0${i + 1}</span><h3>${title}</h3><p>${desc}</p></article>`).join("")}</div></section>${worlds}<section class="wrap" style="padding-bottom:90px"><div class="band"><div><h2>Good to know before you play.</h2><p>Find answers, contact the developer and read how ${game.name} handles your information.</p></div><div class="actions">${button("Support", `/support/${slug}/`)}${button("Privacy", `/privacy/${slug}/`)}</div></div></section>`,
+    `${breadcrumb(game.name)}<div class="wrap product-hero"><div><div class="eyebrow">${game.type}</div><h1>${ant ? "Small colony.<br>Big ambition." : "Your next world<br>is one tap away."}</h1><p>${game.description}</p><div class="actions">${ant ? button("View on the App Store", store, true) : '<span class="pill">Coming soon to iPhone &amp; iPad</span>'}${button("Player support", `/support/${slug}/`)}</div>${!ant ? '<p class="notice">Game Central is being prepared for the App Store. Explore the collection here and check back for its release.</p>' : '<p class="form-note">Free to download. Includes advertising and optional in-app purchases.</p>'}</div><div class="product-image ${ant ? "ant-image" : ""}">${image(game.icon, game.name + " app artwork", 'width="640" height="640" fetchpriority="high"')}<div class="product-caption">${game.name} / Drury Module</div></div></div><dl class="wrap fact-strip">${facts.map(([key, value]) => `<div><dt>${key}</dt><dd>${value}</dd></div>`).join("")}</dl><section class="section wrap"><div class="section-head"><div><div class="eyebrow">Made for your kind of play</div><h2>${ant ? "A little more. Every day." : "Stay curious. Keep playing."}</h2></div></div><div class="feature-grid">${features[slug].map(([title, desc], i) => `<article><span class="number">0${i + 1}</span><h3>${title}</h3><p>${desc}</p></article>`).join("")}</div></section>${worlds}<section class="wrap" style="padding-bottom:90px"><div class="band"><div><h2>Good to know before you play.</h2><p>Find answers, contact the developer and read how ${game.name} handles your information.</p></div><div class="actions">${button("Support", `/support/${slug}/`)}${button("Privacy", `/privacy/${slug}/`)}</div></div></section>`,
     "games",
   );
 }

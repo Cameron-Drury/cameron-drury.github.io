@@ -3,27 +3,32 @@ export const faqs = {
     {
       question: "Can I play Game Central offline?",
       answer:
-        "<p>Yes. Game Central is an offline collection for iPhone running iOS 18 or later. The games and their artwork are included in the app, and you do not need an account or an internet connection to play.</p>",
+        "<p>Yes. Game Central is a native offline collection for iPhone and iPad running iOS or iPadOS 18 or later. The games and their artwork are included in the app, and you do not need an account or an internet connection to play.</p>",
+    },
+    {
+      question: "Which games are included?",
+      answer:
+        "<p>The collection includes 12 games: Pocket Expedition, Night Market, Beacon Trail, Build &amp; Ship, Sand Lab, The Quiet Station, Deep Signal, Pocket Rally, Foundry Frontier, Night Archive, Wildhaven and Last Light.</p>",
     },
     {
       question: "Where is my progress saved? Does it sync between devices?",
       answer:
-        "<p>Game progress and favourites are saved locally on your iPhone. Saving is built into each game, so you can return to your worlds later. Game Central does not currently include cloud syncing between devices. Deleting the app or resetting a game can remove its saved progress.</p>",
+        "<p>Saved game progress and favourites are stored locally on your device. Game Central does not currently include cloud syncing between devices. Deleting the app or resetting a game can remove its saved progress.</p>",
     },
     {
       question: "How do I keep my favourite games at the top?",
       answer:
-        "<p>Use the pin button on a game in the collection to add it to Favourites. You can pin up to six games. To make room for another, unpin one you have already selected. Your choices are remembered on your iPhone.</p>",
+        "<p>Use the pin button on a game in the collection to add it to Favourites. You can pin up to six games. To make room for another, unpin one you have already selected. Your choices are remembered on your device.</p>",
     },
     {
       question: "How do I return to the collection?",
       answer:
-        "<p>Use the back control inside the game to return to the Game Central collection, then choose another world. Some games use a landscape layout while the collection uses portrait, so the screen may rotate as you move between them.</p>",
+        "<p>Use the back control inside the game to return to the Game Central collection, then choose another world. On iPhone, the collection uses portrait and some games rotate to landscape. On iPad, the collection fits portrait and landscape. Turn your iPad sideways when a game shows the rotation prompt; that game pauses while the prompt is visible.</p>",
     },
     {
       question: "What should I do if a game freezes or will not open?",
       answer:
-        "<p>If you can, return to the collection before closing the app. Reopen Game Central and try the game again. If the problem continues, contact support with the game name, your iPhone model, iOS version and the steps that caused it. A screenshot or short recording can help. Avoid deleting the app or resetting a game while we investigate, as progress is stored locally.</p>",
+        "<p>If you can, return to the collection before closing the app. Reopen Game Central and try the game again. If the problem continues, contact support with the game name, your iPhone or iPad model, iOS or iPadOS version and the steps that caused it. A screenshot or short recording can help. Avoid deleting the app or resetting a game while we investigate, as progress is stored locally.</p>",
     },
   ],
   "idle-ant-colony": [
