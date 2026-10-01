@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cameron-drury.github.io/sitemap.xml

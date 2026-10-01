@@ -1,0 +1,46 @@
+[
+  {
+    "path": "/",
+    "file": "index.html"
+  },
+  {
+    "path": "/software/",
+    "file": "software/index.html"
+  },
+  {
+    "path": "/games/idle-ant-colony/",
+    "file": "games/idle-ant-colony/index.html"
+  },
+  {
+    "path": "/games/game-central/",
+    "file": "games/game-central/index.html"
+  },
+  {
+    "path": "/support/",
+    "file": "support/index.html"
+  },
+  {
+    "path": "/support/idle-ant-colony/",
+    "file": "support/idle-ant-colony/index.html"
+  },
+  {
+    "path": "/support/game-central/",
+    "file": "support/game-central/index.html"
+  },
+  {
+    "path": "/privacy/",
+    "file": "privacy/index.html"
+  },
+  {
+    "path": "/privacy/idle-ant-colony/",
+    "file": "privacy/idle-ant-colony/index.html"
+  },
+  {
+    "path": "/privacy/game-central/",
+    "file": "privacy/game-central/index.html"
+  },
+  {
+    "path": "/404.html",
+    "file": "404.html"
+  }
+]
