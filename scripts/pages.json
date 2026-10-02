@@ -8,6 +8,10 @@
     "file": "software/index.html"
   },
   {
+    "path": "/software/pdf-editor/",
+    "file": "software/pdf-editor/index.html"
+  },
+  {
     "path": "/games/idle-ant-colony/",
     "file": "games/idle-ant-colony/index.html"
   },

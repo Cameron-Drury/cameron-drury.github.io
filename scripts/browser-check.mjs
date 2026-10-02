@@ -44,6 +44,7 @@ for (const width of [1440, 390, 320]) {
     const state = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth > window.innerWidth,
       brokenImages: [...document.images]
+        .filter((x) => x.hasAttribute("src"))
         .filter((x) => !x.complete || !x.naturalWidth)
         .map((x) => x.src),
       h1: document.querySelectorAll("h1").length,

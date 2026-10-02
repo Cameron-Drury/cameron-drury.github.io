@@ -4,15 +4,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "node scripts/pdf-vendor.mjs && node scripts/build.mjs",
     "check": "node scripts/check.mjs",
     "preview": "python3 -m http.server 4173 --bind 127.0.0.1",
     "test:browser": "node scripts/browser-check.mjs",
+    "test:pdf": "node scripts/pdf-engine-check.mjs",
+    "test:pdf:browser": "node scripts/pdf-browser-check.mjs",
     "format": "prettier --write \"assets/css/*.css\" \"assets/js/*.js\" \"scripts/*.mjs\" package.json README.md"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "playwright": "^1.63.0",
     "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "mupdf": "^1.28.1",
+    "tesseract.js": "^7.0.0"
   }
 }
